@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/bila-go"
-	"github.com/stainless-sdks/bila-go/internal"
-	"github.com/stainless-sdks/bila-go/option"
+	"github.com/bilasdk/go"
+	"github.com/bilasdk/go/internal"
+	"github.com/bilasdk/go/option"
 )
 
 type closureTransport struct {

@@ -14,7 +14,7 @@ import (
 	"encoding"
 	"encoding/base64"
 	"fmt"
-	"github.com/stainless-sdks/bila-go/internal/encoding/json/shims"
+	"github.com/bilasdk/go/internal/encoding/json/shims"
 	"reflect"
 	"strconv"
 	"strings"

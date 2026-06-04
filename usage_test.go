@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/bila-go"
-	"github.com/stainless-sdks/bila-go/internal/testutil"
-	"github.com/stainless-sdks/bila-go/option"
+	"github.com/bilasdk/go"
+	"github.com/bilasdk/go/internal/testutil"
+	"github.com/bilasdk/go/option"
 )
 
 func TestUsage(t *testing.T) {

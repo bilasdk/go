@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/bila-go/internal/apijson"
-	"github.com/stainless-sdks/bila-go/packages/respjson"
+	"github.com/bilasdk/go/internal/apijson"
+	"github.com/bilasdk/go/packages/respjson"
 	"testing"
 )
 

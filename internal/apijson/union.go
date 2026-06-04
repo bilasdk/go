@@ -2,7 +2,7 @@ package apijson
 
 import (
 	"errors"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/packages/param"
 	"reflect"
 
 	"github.com/tidwall/gjson"

@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/bila-go/internal/apijson"
-	"github.com/stainless-sdks/bila-go/internal/requestconfig"
-	"github.com/stainless-sdks/bila-go/option"
-	"github.com/stainless-sdks/bila-go/packages/param"
-	"github.com/stainless-sdks/bila-go/packages/respjson"
+	"github.com/bilasdk/go/internal/apijson"
+	"github.com/bilasdk/go/internal/requestconfig"
+	"github.com/bilasdk/go/option"
+	"github.com/bilasdk/go/packages/param"
+	"github.com/bilasdk/go/packages/respjson"
 )
 
 // Account resolution/verification endpoints

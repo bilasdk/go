@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/bila-go/internal/apijson"
-	rj "github.com/stainless-sdks/bila-go/packages/respjson"
+	"github.com/bilasdk/go/internal/apijson"
+	rj "github.com/bilasdk/go/packages/respjson"
 	"reflect"
 	"testing"
 )

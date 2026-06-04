@@ -7,7 +7,7 @@ package apijson
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/packages/param"
 	"reflect"
 	"strconv"
 	"sync"
