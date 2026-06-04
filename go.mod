@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/bila-go
+module github.com/bilasdk/go
 
 go 1.22
 

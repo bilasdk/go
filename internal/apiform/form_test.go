@@ -2,7 +2,7 @@ package apiform
 
 import (
 	"bytes"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/packages/param"
 	"io"
 	"mime/multipart"
 	"strings"

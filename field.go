@@ -1,7 +1,7 @@
 package bila
 
 import (
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/packages/param"
 	"io"
 	"time"
 )

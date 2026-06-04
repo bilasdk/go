@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	shimjson "github.com/stainless-sdks/bila-go/internal/encoding/json"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	shimjson "github.com/bilasdk/go/internal/encoding/json"
+	"github.com/bilasdk/go/packages/param"
 )
 
 type Struct struct {

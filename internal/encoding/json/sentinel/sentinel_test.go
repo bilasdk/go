@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/bila-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/internal/encoding/json/sentinel"
+	"github.com/bilasdk/go/packages/param"
 	"reflect"
 	"slices"
 	"testing"

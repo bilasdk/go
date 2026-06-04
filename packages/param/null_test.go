@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/packages/param"
 	"testing"
 )
 

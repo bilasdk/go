@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/stainless-sdks/bila-go/internal/apijson"
-	"github.com/stainless-sdks/bila-go/packages/respjson"
+	"github.com/bilasdk/go/internal/apijson"
+	"github.com/bilasdk/go/packages/respjson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is

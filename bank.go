@@ -8,12 +8,12 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/bila-go/internal/apijson"
-	"github.com/stainless-sdks/bila-go/internal/apiquery"
-	"github.com/stainless-sdks/bila-go/internal/requestconfig"
-	"github.com/stainless-sdks/bila-go/option"
-	"github.com/stainless-sdks/bila-go/packages/param"
-	"github.com/stainless-sdks/bila-go/packages/respjson"
+	"github.com/bilasdk/go/internal/apijson"
+	"github.com/bilasdk/go/internal/apiquery"
+	"github.com/bilasdk/go/internal/requestconfig"
+	"github.com/bilasdk/go/option"
+	"github.com/bilasdk/go/packages/param"
+	"github.com/bilasdk/go/packages/respjson"
 )
 
 // Bank reference data endpoints

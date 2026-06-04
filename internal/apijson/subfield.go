@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/bila-go/packages/respjson"
+	"github.com/bilasdk/go/packages/respjson"
 	"reflect"
 )
 

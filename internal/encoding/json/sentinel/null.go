@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/stainless-sdks/bila-go/internal/encoding/json/shims"
+	"github.com/bilasdk/go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )
