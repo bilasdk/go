@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/bila-go/internal/encoding/json/sentinel"
+	"github.com/bilasdk/go/internal/encoding/json/sentinel"
 	"reflect"
 )
 

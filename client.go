@@ -9,8 +9,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/stainless-sdks/bila-go/internal/requestconfig"
-	"github.com/stainless-sdks/bila-go/option"
+	"github.com/bilasdk/go/internal/requestconfig"
+	"github.com/bilasdk/go/option"
 )
 
 // Client creates a struct with services and top level methods that help with

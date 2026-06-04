@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/bila-go/internal/apijson"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/internal/apijson"
+	"github.com/bilasdk/go/packages/param"
 	"reflect"
 	"testing"
 )

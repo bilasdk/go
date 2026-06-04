@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/bila-go/internal"
-	"github.com/stainless-sdks/bila-go/internal/apierror"
-	"github.com/stainless-sdks/bila-go/internal/apiform"
-	"github.com/stainless-sdks/bila-go/internal/apiquery"
+	"github.com/bilasdk/go/internal"
+	"github.com/bilasdk/go/internal/apierror"
+	"github.com/bilasdk/go/internal/apiform"
+	"github.com/bilasdk/go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

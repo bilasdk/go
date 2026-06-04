@@ -3,8 +3,8 @@
 package bila
 
 import (
-	"github.com/stainless-sdks/bila-go/internal/apierror"
-	"github.com/stainless-sdks/bila-go/packages/param"
+	"github.com/bilasdk/go/internal/apierror"
+	"github.com/bilasdk/go/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding
