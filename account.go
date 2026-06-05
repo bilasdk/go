@@ -17,6 +17,7 @@ import (
 	"github.com/bilasdk/go/option"
 	"github.com/bilasdk/go/packages/param"
 	"github.com/bilasdk/go/packages/respjson"
+	"github.com/bilasdk/go/shared"
 )
 
 // Account/wallet management endpoints
@@ -72,44 +73,30 @@ func (r *AccountService) GetBalance(ctx context.Context, id string, opts ...opti
 	return res, err
 }
 
-type BilaResponse struct {
-	// Response message
-	Message string `json:"message" api:"required"`
-	// Request success status
-	Status bool `json:"status" api:"required"`
+type AccountDetailsDto struct {
+	// Account holder name
+	AccountName string `json:"accountName" api:"required"`
+	// Account detail type
+	Type string `json:"type" api:"required"`
+	// Till number (for mobile money)
+	TillNumber string `json:"tillNumber"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Message     respjson.Field
-		Status      respjson.Field
+		AccountName respjson.Field
+		Type        respjson.Field
+		TillNumber  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r BilaResponse) RawJSON() string { return r.JSON.raw }
-func (r *BilaResponse) UnmarshalJSON(data []byte) error {
+func (r AccountDetailsDto) RawJSON() string { return r.JSON.raw }
+func (r *AccountDetailsDto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountGetResponse struct {
-	Data AccountGetResponseData `json:"data"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	BilaResponse
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *AccountGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type AccountGetResponseData struct {
+type AccountResponseDto struct {
 	// Account UUID
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Account creation timestamp
@@ -117,15 +104,15 @@ type AccountGetResponseData struct {
 	// Currency code
 	Currency string `json:"currency" api:"required"`
 	// Account details
-	Details AccountGetResponseDataDetails `json:"details" api:"required"`
+	Details AccountDetailsDto `json:"details" api:"required"`
 	// Account status
 	//
 	// Any of "active", "inactive", "suspended".
-	Status string `json:"status" api:"required"`
+	Status AccountResponseDtoStatus `json:"status" api:"required"`
 	// Account type
 	//
 	// Any of "main", "sub", "virtual".
-	Type string `json:"type" api:"required"`
+	Type AccountResponseDtoType `json:"type" api:"required"`
 	// Available balance
 	AvailableBalance string `json:"availableBalance"`
 	// Ledger balance
@@ -146,44 +133,65 @@ type AccountGetResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AccountGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *AccountGetResponseData) UnmarshalJSON(data []byte) error {
+func (r AccountResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *AccountResponseDto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Account details
-type AccountGetResponseDataDetails struct {
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Account detail type
-	Type string `json:"type" api:"required"`
-	// Till number (for mobile money)
-	TillNumber string `json:"tillNumber"`
+// Account status
+type AccountResponseDtoStatus string
+
+const (
+	AccountResponseDtoStatusActive    AccountResponseDtoStatus = "active"
+	AccountResponseDtoStatusInactive  AccountResponseDtoStatus = "inactive"
+	AccountResponseDtoStatusSuspended AccountResponseDtoStatus = "suspended"
+)
+
+// Account type
+type AccountResponseDtoType string
+
+const (
+	AccountResponseDtoTypeMain    AccountResponseDtoType = "main"
+	AccountResponseDtoTypeSub     AccountResponseDtoType = "sub"
+	AccountResponseDtoTypeVirtual AccountResponseDtoType = "virtual"
+)
+
+type AccountGetResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool               `json:"status" api:"required"`
+	Data   AccountResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AccountName respjson.Field
-		Type        respjson.Field
-		TillNumber  respjson.Field
+		Message     respjson.Field
+		Status      respjson.Field
+		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r AccountGetResponseDataDetails) RawJSON() string { return r.JSON.raw }
-func (r *AccountGetResponseDataDetails) UnmarshalJSON(data []byte) error {
+func (r AccountGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *AccountGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type AccountListResponse struct {
-	Data AccountListResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                    `json:"status" api:"required"`
+	Data   AccountListResponseData `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -194,9 +202,9 @@ func (r *AccountListResponse) UnmarshalJSON(data []byte) error {
 
 type AccountListResponseData struct {
 	// List of accounts
-	Data []AccountListResponseDataData `json:"data" api:"required"`
+	Data []AccountResponseDto `json:"data" api:"required"`
 	// Pagination metadata
-	Meta AccountListResponseDataMeta `json:"meta" api:"required"`
+	Meta shared.PaginationMetaDto `json:"meta" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -212,108 +220,20 @@ func (r *AccountListResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountListResponseDataData struct {
-	// Account UUID
-	ID string `json:"id" api:"required" format:"uuid"`
-	// Account creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Currency code
-	Currency string `json:"currency" api:"required"`
-	// Account details
-	Details AccountListResponseDataDataDetails `json:"details" api:"required"`
-	// Account status
-	//
-	// Any of "active", "inactive", "suspended".
-	Status string `json:"status" api:"required"`
-	// Account type
-	//
-	// Any of "main", "sub", "virtual".
-	Type string `json:"type" api:"required"`
-	// Available balance
-	AvailableBalance string `json:"availableBalance"`
-	// Ledger balance
-	LedgerBalance string `json:"ledgerBalance"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID               respjson.Field
-		CreatedAt        respjson.Field
-		Currency         respjson.Field
-		Details          respjson.Field
-		Status           respjson.Field
-		Type             respjson.Field
-		AvailableBalance respjson.Field
-		LedgerBalance    respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListResponseDataData) RawJSON() string { return r.JSON.raw }
-func (r *AccountListResponseDataData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Account details
-type AccountListResponseDataDataDetails struct {
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Account detail type
-	Type string `json:"type" api:"required"`
-	// Till number (for mobile money)
-	TillNumber string `json:"tillNumber"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AccountName respjson.Field
-		Type        respjson.Field
-		TillNumber  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListResponseDataDataDetails) RawJSON() string { return r.JSON.raw }
-func (r *AccountListResponseDataDataDetails) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination metadata
-type AccountListResponseDataMeta struct {
-	// Current page number
-	CurrentPage float64 `json:"currentPage" api:"required"`
-	// Total number of pages
-	PageCount float64 `json:"pageCount" api:"required"`
-	// Items per page
-	PerPage float64 `json:"perPage" api:"required"`
-	// Total number of records
-	Total float64 `json:"total" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CurrentPage respjson.Field
-		PageCount   respjson.Field
-		PerPage     respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListResponseDataMeta) RawJSON() string { return r.JSON.raw }
-func (r *AccountListResponseDataMeta) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type AccountGetBalanceResponse struct {
-	Data AccountGetBalanceResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                          `json:"status" api:"required"`
+	Data   AccountGetBalanceResponseData `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API

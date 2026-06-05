@@ -17,6 +17,7 @@ import (
 	"github.com/bilasdk/go/option"
 	"github.com/bilasdk/go/packages/param"
 	"github.com/bilasdk/go/packages/respjson"
+	"github.com/bilasdk/go/shared"
 )
 
 // Webhook configuration and delivery history
@@ -69,7 +70,7 @@ func (r *WebhookService) List(ctx context.Context, opts ...option.RequestOption)
 }
 
 // Deactivate a webhook
-func (r *WebhookService) Deactivate(ctx context.Context, id string, opts ...option.RequestOption) (res *BilaResponse, err error) {
+func (r *WebhookService) Deactivate(ctx context.Context, id string, opts ...option.RequestOption) (res *WebhookDeactivateResponse, err error) {
 	opts = slices.Concat(r.options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -112,15 +113,56 @@ func (r *WebhookService) RotateSecret(ctx context.Context, id string, opts ...op
 	return res, err
 }
 
-type WebhookNewResponse struct {
-	Data WebhookNewResponseData `json:"data"`
+type WebhookConfigResponseDto struct {
+	// Webhook config UUID
+	ID        string    `json:"id" api:"required" format:"uuid"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// Subscribed event types
+	Events []string `json:"events" api:"required"`
+	// Whether the webhook is active
+	IsActive bool `json:"isActive" api:"required"`
+	// Merchant UUID
+	MerchantID string `json:"merchantId" api:"required" format:"uuid"`
+	// Signing secret; plaintext only on create/rotate-secret, otherwise masked
+	Secret    string    `json:"secret" api:"required"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// Webhook endpoint URL
+	URL string `json:"url" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ID          respjson.Field
+		CreatedAt   respjson.Field
+		Events      respjson.Field
+		IsActive    respjson.Field
+		MerchantID  respjson.Field
+		Secret      respjson.Field
+		UpdatedAt   respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WebhookConfigResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *WebhookConfigResponseDto) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WebhookNewResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                     `json:"status" api:"required"`
+	Data   WebhookConfigResponseDto `json:"data"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -129,51 +171,20 @@ func (r *WebhookNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type WebhookNewResponseData struct {
-	// Webhook config UUID
-	ID        string    `json:"id" api:"required" format:"uuid"`
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Subscribed event types
-	Events []string `json:"events" api:"required"`
-	// Whether the webhook is active
-	IsActive bool `json:"isActive" api:"required"`
-	// Merchant UUID
-	MerchantID string `json:"merchantId" api:"required" format:"uuid"`
-	// Signing secret; plaintext only on create/rotate-secret, otherwise masked
-	Secret    string    `json:"secret" api:"required"`
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Webhook endpoint URL
-	URL string `json:"url" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		Events      respjson.Field
-		IsActive    respjson.Field
-		MerchantID  respjson.Field
-		Secret      respjson.Field
-		UpdatedAt   respjson.Field
-		URL         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WebhookNewResponseData) RawJSON() string { return r.JSON.raw }
-func (r *WebhookNewResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type WebhookUpdateResponse struct {
-	Data WebhookUpdateResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                     `json:"status" api:"required"`
+	Data   WebhookConfigResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -182,51 +193,20 @@ func (r *WebhookUpdateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type WebhookUpdateResponseData struct {
-	// Webhook config UUID
-	ID        string    `json:"id" api:"required" format:"uuid"`
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Subscribed event types
-	Events []string `json:"events" api:"required"`
-	// Whether the webhook is active
-	IsActive bool `json:"isActive" api:"required"`
-	// Merchant UUID
-	MerchantID string `json:"merchantId" api:"required" format:"uuid"`
-	// Signing secret; plaintext only on create/rotate-secret, otherwise masked
-	Secret    string    `json:"secret" api:"required"`
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Webhook endpoint URL
-	URL string `json:"url" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		Events      respjson.Field
-		IsActive    respjson.Field
-		MerchantID  respjson.Field
-		Secret      respjson.Field
-		UpdatedAt   respjson.Field
-		URL         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WebhookUpdateResponseData) RawJSON() string { return r.JSON.raw }
-func (r *WebhookUpdateResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type WebhookListResponse struct {
-	Data []WebhookListResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                       `json:"status" api:"required"`
+	Data   []WebhookConfigResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -235,51 +215,40 @@ func (r *WebhookListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type WebhookListResponseData struct {
-	// Webhook config UUID
-	ID        string    `json:"id" api:"required" format:"uuid"`
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Subscribed event types
-	Events []string `json:"events" api:"required"`
-	// Whether the webhook is active
-	IsActive bool `json:"isActive" api:"required"`
-	// Merchant UUID
-	MerchantID string `json:"merchantId" api:"required" format:"uuid"`
-	// Signing secret; plaintext only on create/rotate-secret, otherwise masked
-	Secret    string    `json:"secret" api:"required"`
-	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
-	// Webhook endpoint URL
-	URL string `json:"url" api:"required"`
+type WebhookDeactivateResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		Events      respjson.Field
-		IsActive    respjson.Field
-		MerchantID  respjson.Field
-		Secret      respjson.Field
-		UpdatedAt   respjson.Field
-		URL         respjson.Field
+		Message     respjson.Field
+		Status      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r WebhookListResponseData) RawJSON() string { return r.JSON.raw }
-func (r *WebhookListResponseData) UnmarshalJSON(data []byte) error {
+func (r WebhookDeactivateResponse) RawJSON() string { return r.JSON.raw }
+func (r *WebhookDeactivateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type WebhookGetDeliveriesResponse struct {
-	Data WebhookGetDeliveriesResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                             `json:"status" api:"required"`
+	Data   WebhookGetDeliveriesResponseData `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -292,7 +261,7 @@ type WebhookGetDeliveriesResponseData struct {
 	// List of webhook deliveries
 	Data []WebhookGetDeliveriesResponseDataData `json:"data" api:"required"`
 	// Pagination metadata
-	Meta WebhookGetDeliveriesResponseDataMeta `json:"meta" api:"required"`
+	Meta shared.PaginationMetaDto `json:"meta" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -362,42 +331,20 @@ func (r *WebhookGetDeliveriesResponseDataData) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Pagination metadata
-type WebhookGetDeliveriesResponseDataMeta struct {
-	// Current page number
-	CurrentPage float64 `json:"currentPage" api:"required"`
-	// Total number of pages
-	PageCount float64 `json:"pageCount" api:"required"`
-	// Items per page
-	PerPage float64 `json:"perPage" api:"required"`
-	// Total number of records
-	Total float64 `json:"total" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CurrentPage respjson.Field
-		PageCount   respjson.Field
-		PerPage     respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WebhookGetDeliveriesResponseDataMeta) RawJSON() string { return r.JSON.raw }
-func (r *WebhookGetDeliveriesResponseDataMeta) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type WebhookListEventsResponse struct {
-	Data []string `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool     `json:"status" api:"required"`
+	Data   []string `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -407,14 +354,19 @@ func (r *WebhookListEventsResponse) UnmarshalJSON(data []byte) error {
 }
 
 type WebhookRotateSecretResponse struct {
-	Data WebhookRotateSecretResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                            `json:"status" api:"required"`
+	Data   WebhookRotateSecretResponseData `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API

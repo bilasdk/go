@@ -46,14 +46,19 @@ func (r *BankService) List(ctx context.Context, query BankListParams, opts ...op
 }
 
 type BankListResponse struct {
-	Data []BankListResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                   `json:"status" api:"required"`
+	Data   []BankListResponseData `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API

@@ -51,15 +51,55 @@ func (r *ResolveService) MobileMoney(ctx context.Context, body ResolveMobileMone
 	return res, err
 }
 
-type ResolveBankAccountResponse struct {
-	Data ResolveBankAccountResponseData `json:"data"`
+type ResolvedAccountResponseDto struct {
+	// Account holder name
+	AccountName string `json:"accountName" api:"required"`
+	// Country code
+	Country string `json:"country" api:"required"`
+	// Bank account number
+	AccountNumber string `json:"accountNumber"`
+	// Bank ID
+	BankID string `json:"bankId"`
+	// Bank name
+	BankName string `json:"bankName"`
+	// Mobile money operator
+	Operator string `json:"operator"`
+	// Phone number
+	Phone string `json:"phone"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		AccountName   respjson.Field
+		Country       respjson.Field
+		AccountNumber respjson.Field
+		BankID        respjson.Field
+		BankName      respjson.Field
+		Operator      respjson.Field
+		Phone         respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResolvedAccountResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *ResolvedAccountResponseDto) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResolveBankAccountResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                       `json:"status" api:"required"`
+	Data   ResolvedAccountResponseDto `json:"data"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -68,90 +108,25 @@ func (r *ResolveBankAccountResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ResolveBankAccountResponseData struct {
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Country code
-	Country string `json:"country" api:"required"`
-	// Bank account number
-	AccountNumber string `json:"accountNumber"`
-	// Bank ID
-	BankID string `json:"bankId"`
-	// Bank name
-	BankName string `json:"bankName"`
-	// Mobile money operator
-	Operator string `json:"operator"`
-	// Phone number
-	Phone string `json:"phone"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AccountName   respjson.Field
-		Country       respjson.Field
-		AccountNumber respjson.Field
-		BankID        respjson.Field
-		BankName      respjson.Field
-		Operator      respjson.Field
-		Phone         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResolveBankAccountResponseData) RawJSON() string { return r.JSON.raw }
-func (r *ResolveBankAccountResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ResolveMobileMoneyResponse struct {
-	Data ResolveMobileMoneyResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                       `json:"status" api:"required"`
+	Data   ResolvedAccountResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
 func (r ResolveMobileMoneyResponse) RawJSON() string { return r.JSON.raw }
 func (r *ResolveMobileMoneyResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ResolveMobileMoneyResponseData struct {
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Country code
-	Country string `json:"country" api:"required"`
-	// Bank account number
-	AccountNumber string `json:"accountNumber"`
-	// Bank ID
-	BankID string `json:"bankId"`
-	// Bank name
-	BankName string `json:"bankName"`
-	// Mobile money operator
-	Operator string `json:"operator"`
-	// Phone number
-	Phone string `json:"phone"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AccountName   respjson.Field
-		Country       respjson.Field
-		AccountNumber respjson.Field
-		BankID        respjson.Field
-		BankName      respjson.Field
-		Operator      respjson.Field
-		Phone         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResolveMobileMoneyResponseData) RawJSON() string { return r.JSON.raw }
-func (r *ResolveMobileMoneyResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -162,7 +137,7 @@ type ResolveBankAccountParams struct {
 	BankID string `json:"bankId" api:"required"`
 	// Country code
 	//
-	// Any of "zm", "ng".
+	// Any of "zm".
 	Country ResolveBankAccountParamsCountry `json:"country,omitzero"`
 	paramObj
 }
@@ -180,17 +155,16 @@ type ResolveBankAccountParamsCountry string
 
 const (
 	ResolveBankAccountParamsCountryZm ResolveBankAccountParamsCountry = "zm"
-	ResolveBankAccountParamsCountryNg ResolveBankAccountParamsCountry = "ng"
 )
 
 type ResolveMobileMoneyParams struct {
 	// Country code
 	//
-	// Any of "zm", "ng".
+	// Any of "zm".
 	Country ResolveMobileMoneyParamsCountry `json:"country,omitzero" api:"required"`
 	// Mobile money operator
 	//
-	// Any of "airtel", "mtn", "zamtel", "vodacom".
+	// Any of "airtel", "mtn", "zamtel".
 	Operator ResolveMobileMoneyParamsOperator `json:"operator,omitzero" api:"required"`
 	// Mobile phone number
 	Phone string `json:"phone" api:"required"`
@@ -210,15 +184,13 @@ type ResolveMobileMoneyParamsCountry string
 
 const (
 	ResolveMobileMoneyParamsCountryZm ResolveMobileMoneyParamsCountry = "zm"
-	ResolveMobileMoneyParamsCountryNg ResolveMobileMoneyParamsCountry = "ng"
 )
 
 // Mobile money operator
 type ResolveMobileMoneyParamsOperator string
 
 const (
-	ResolveMobileMoneyParamsOperatorAirtel  ResolveMobileMoneyParamsOperator = "airtel"
-	ResolveMobileMoneyParamsOperatorMtn     ResolveMobileMoneyParamsOperator = "mtn"
-	ResolveMobileMoneyParamsOperatorZamtel  ResolveMobileMoneyParamsOperator = "zamtel"
-	ResolveMobileMoneyParamsOperatorVodacom ResolveMobileMoneyParamsOperator = "vodacom"
+	ResolveMobileMoneyParamsOperatorAirtel ResolveMobileMoneyParamsOperator = "airtel"
+	ResolveMobileMoneyParamsOperatorMtn    ResolveMobileMoneyParamsOperator = "mtn"
+	ResolveMobileMoneyParamsOperatorZamtel ResolveMobileMoneyParamsOperator = "zamtel"
 )
