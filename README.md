@@ -66,6 +66,29 @@ func main() {
 
 ```
 
+## Examples
+
+Runnable examples live in the [examples](./examples/) directory. Each file demonstrates a specific area of the API:
+
+| Example                                                     | Description                                          |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| [accounts.go](./examples/accounts.go)                       | Retrieve accounts, list accounts, and check balances |
+| [banks.go](./examples/banks.go)                             | List supported banks and financial institutions      |
+| [collections.go](./examples/collections.go)                 | Collect payments via mobile money                    |
+| [resolve.go](./examples/resolve.go)                         | Verify bank account and mobile money details         |
+| [transactions.go](./examples/transactions.go)               | Retrieve and list transaction history                |
+| [transfer_recipients.go](./examples/transfer_recipients.go) | Manage payout recipients                             |
+| [transfers.go](./examples/transfers.go)                     | Send payouts via bank transfer and mobile money      |
+| [webhooks.go](./examples/webhooks.go)                       | Configure webhooks and manage delivery history       |
+
+To run an example from this repository:
+
+```sh
+go run ./examples/accounts.go
+```
+
+Replace `accounts.go` with any example from the table above. Set `BILA_API_KEY` in your environment or update the placeholder API key in the example file before running.
+
 ### Request fields
 
 The bila library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
