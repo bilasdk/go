@@ -109,7 +109,7 @@ func TestCollectionInitiateMobileMoneyCollectionWithOptionalParams(t *testing.T)
 		Phone:        "0977433571",
 		Reference:    "collection-001",
 		WalletID:     "68f11209-451f-4a15-bfcd-d916eb8b09f4",
-		Bearer:       bila.CollectionInitiateMobileMoneyCollectionParamsBearerCustomer,
+		Bearer:       bila.CollectionInitiateMobileMoneyCollectionParamsBearerMerchant,
 		CustomerName: bila.String("John Doe"),
 		Narration:    bila.String("Payment for subscription"),
 	})

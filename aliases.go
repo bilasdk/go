@@ -5,6 +5,7 @@ package bila
 import (
 	"github.com/bilasdk/go/internal/apierror"
 	"github.com/bilasdk/go/packages/param"
+	"github.com/bilasdk/go/shared"
 )
 
 // aliased to make [param.APIUnion] private when embedding
@@ -14,3 +15,6 @@ type paramUnion = param.APIUnion
 type paramObj = param.APIObject
 
 type Error = apierror.Error
+
+// This is an alias to an internal type.
+type PaginationMetaDto = shared.PaginationMetaDto

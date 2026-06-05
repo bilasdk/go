@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/bilasdk/go@v0.0.2'
+go get -u 'github.com/bilasdk/go@v0.1.0'
 ```
 
 <!-- x-release-please-end -->
@@ -61,7 +61,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", accounts)
+	fmt.Printf("%+v\n", accounts.Message)
 }
 
 ```
