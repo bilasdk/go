@@ -17,6 +17,7 @@ import (
 	"github.com/bilasdk/go/option"
 	"github.com/bilasdk/go/packages/param"
 	"github.com/bilasdk/go/packages/respjson"
+	"github.com/bilasdk/go/shared"
 )
 
 // Payment collection operation endpoints
@@ -81,24 +82,30 @@ func (r *CollectionService) InitiateMobileMoneyCollection(ctx context.Context, b
 	return res, err
 }
 
-type CollectionGetResponse struct {
-	Data CollectionGetResponseData `json:"data"`
+type BilaCollectionCustomerDto struct {
+	// Customer name
+	Name string `json:"name" api:"required"`
+	// Mobile money operator
+	Operator string `json:"operator" api:"required"`
+	// Customer phone number
+	Phone string `json:"phone" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Data        respjson.Field
+		Name        respjson.Field
+		Operator    respjson.Field
+		Phone       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
-func (r CollectionGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *CollectionGetResponse) UnmarshalJSON(data []byte) error {
+func (r BilaCollectionCustomerDto) RawJSON() string { return r.JSON.raw }
+func (r *BilaCollectionCustomerDto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type CollectionGetResponseData struct {
+type BilaCollectionResponseDto struct {
 	// Collection ID
 	ID string `json:"id" api:"required"`
 	// Collection amount
@@ -108,19 +115,19 @@ type CollectionGetResponseData struct {
 	// Currency code
 	Currency string `json:"currency" api:"required"`
 	// Customer details
-	Customer CollectionGetResponseDataCustomer `json:"customer" api:"required"`
+	Customer BilaCollectionCustomerDto `json:"customer" api:"required"`
 	// Client reference
 	Reference string `json:"reference" api:"required"`
 	// Collection status
 	//
 	// Any of "pending", "successful", "failed", "otp-required", "pay-offline".
-	Status string `json:"status" api:"required"`
+	Status BilaCollectionResponseDtoStatus `json:"status" api:"required"`
 	// Collection completion timestamp
 	CompletedAt time.Time `json:"completedAt" format:"date-time"`
-	// Who bears the collection platform fee
+	// Who bears the transaction fee
 	//
 	// Any of "merchant", "customer".
-	FeeBearer string `json:"feeBearer"`
+	FeeBearer BilaCollectionResponseDtoFeeBearer `json:"feeBearer"`
 	// Collection narration
 	Narration string `json:"narration"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -141,44 +148,66 @@ type CollectionGetResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CollectionGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *CollectionGetResponseData) UnmarshalJSON(data []byte) error {
+func (r BilaCollectionResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *BilaCollectionResponseDto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Customer details
-type CollectionGetResponseDataCustomer struct {
-	// Customer name
-	Name string `json:"name" api:"required"`
-	// Mobile money operator
-	Operator string `json:"operator" api:"required"`
-	// Customer phone number
-	Phone string `json:"phone" api:"required"`
+// Collection status
+type BilaCollectionResponseDtoStatus string
+
+const (
+	BilaCollectionResponseDtoStatusPending     BilaCollectionResponseDtoStatus = "pending"
+	BilaCollectionResponseDtoStatusSuccessful  BilaCollectionResponseDtoStatus = "successful"
+	BilaCollectionResponseDtoStatusFailed      BilaCollectionResponseDtoStatus = "failed"
+	BilaCollectionResponseDtoStatusOtpRequired BilaCollectionResponseDtoStatus = "otp-required"
+	BilaCollectionResponseDtoStatusPayOffline  BilaCollectionResponseDtoStatus = "pay-offline"
+)
+
+// Who bears the transaction fee
+type BilaCollectionResponseDtoFeeBearer string
+
+const (
+	BilaCollectionResponseDtoFeeBearerMerchant BilaCollectionResponseDtoFeeBearer = "merchant"
+	BilaCollectionResponseDtoFeeBearerCustomer BilaCollectionResponseDtoFeeBearer = "customer"
+)
+
+type CollectionGetResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                      `json:"status" api:"required"`
+	Data   BilaCollectionResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Name        respjson.Field
-		Operator    respjson.Field
-		Phone       respjson.Field
+		Message     respjson.Field
+		Status      respjson.Field
+		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r CollectionGetResponseDataCustomer) RawJSON() string { return r.JSON.raw }
-func (r *CollectionGetResponseDataCustomer) UnmarshalJSON(data []byte) error {
+func (r CollectionGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *CollectionGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type CollectionListResponse struct {
-	Data CollectionListResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                       `json:"status" api:"required"`
+	Data   CollectionListResponseData `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -189,9 +218,9 @@ func (r *CollectionListResponse) UnmarshalJSON(data []byte) error {
 
 type CollectionListResponseData struct {
 	// List of collections
-	Data []CollectionListResponseDataData `json:"data" api:"required"`
+	Data []BilaCollectionResponseDto `json:"data" api:"required"`
 	// Pagination metadata
-	Meta CollectionListResponseDataMeta `json:"meta" api:"required"`
+	Meta shared.PaginationMetaDto `json:"meta" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -207,114 +236,20 @@ func (r *CollectionListResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type CollectionListResponseDataData struct {
-	// Collection ID
-	ID string `json:"id" api:"required"`
-	// Collection amount
-	Amount float64 `json:"amount" api:"required"`
-	// Collection creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Currency code
-	Currency string `json:"currency" api:"required"`
-	// Customer details
-	Customer CollectionListResponseDataDataCustomer `json:"customer" api:"required"`
-	// Client reference
-	Reference string `json:"reference" api:"required"`
-	// Collection status
-	//
-	// Any of "pending", "successful", "failed", "otp-required", "pay-offline".
-	Status string `json:"status" api:"required"`
-	// Collection completion timestamp
-	CompletedAt time.Time `json:"completedAt" format:"date-time"`
-	// Who bears the collection platform fee
-	//
-	// Any of "merchant", "customer".
-	FeeBearer string `json:"feeBearer"`
-	// Collection narration
-	Narration string `json:"narration"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Amount      respjson.Field
-		CreatedAt   respjson.Field
-		Currency    respjson.Field
-		Customer    respjson.Field
-		Reference   respjson.Field
-		Status      respjson.Field
-		CompletedAt respjson.Field
-		FeeBearer   respjson.Field
-		Narration   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionListResponseDataData) RawJSON() string { return r.JSON.raw }
-func (r *CollectionListResponseDataData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Customer details
-type CollectionListResponseDataDataCustomer struct {
-	// Customer name
-	Name string `json:"name" api:"required"`
-	// Mobile money operator
-	Operator string `json:"operator" api:"required"`
-	// Customer phone number
-	Phone string `json:"phone" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name        respjson.Field
-		Operator    respjson.Field
-		Phone       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionListResponseDataDataCustomer) RawJSON() string { return r.JSON.raw }
-func (r *CollectionListResponseDataDataCustomer) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination metadata
-type CollectionListResponseDataMeta struct {
-	// Current page number
-	CurrentPage float64 `json:"currentPage" api:"required"`
-	// Total number of pages
-	PageCount float64 `json:"pageCount" api:"required"`
-	// Items per page
-	PerPage float64 `json:"perPage" api:"required"`
-	// Total number of records
-	Total float64 `json:"total" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CurrentPage respjson.Field
-		PageCount   respjson.Field
-		PerPage     respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionListResponseDataMeta) RawJSON() string { return r.JSON.raw }
-func (r *CollectionListResponseDataMeta) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type CollectionGetStatusByReferenceResponse struct {
-	Data CollectionGetStatusByReferenceResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                      `json:"status" api:"required"`
+	Data   BilaCollectionResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -323,166 +258,25 @@ func (r *CollectionGetStatusByReferenceResponse) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type CollectionGetStatusByReferenceResponseData struct {
-	// Collection ID
-	ID string `json:"id" api:"required"`
-	// Collection amount
-	Amount float64 `json:"amount" api:"required"`
-	// Collection creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Currency code
-	Currency string `json:"currency" api:"required"`
-	// Customer details
-	Customer CollectionGetStatusByReferenceResponseDataCustomer `json:"customer" api:"required"`
-	// Client reference
-	Reference string `json:"reference" api:"required"`
-	// Collection status
-	//
-	// Any of "pending", "successful", "failed", "otp-required", "pay-offline".
-	Status string `json:"status" api:"required"`
-	// Collection completion timestamp
-	CompletedAt time.Time `json:"completedAt" format:"date-time"`
-	// Who bears the collection platform fee
-	//
-	// Any of "merchant", "customer".
-	FeeBearer string `json:"feeBearer"`
-	// Collection narration
-	Narration string `json:"narration"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Amount      respjson.Field
-		CreatedAt   respjson.Field
-		Currency    respjson.Field
-		Customer    respjson.Field
-		Reference   respjson.Field
-		Status      respjson.Field
-		CompletedAt respjson.Field
-		FeeBearer   respjson.Field
-		Narration   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionGetStatusByReferenceResponseData) RawJSON() string { return r.JSON.raw }
-func (r *CollectionGetStatusByReferenceResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Customer details
-type CollectionGetStatusByReferenceResponseDataCustomer struct {
-	// Customer name
-	Name string `json:"name" api:"required"`
-	// Mobile money operator
-	Operator string `json:"operator" api:"required"`
-	// Customer phone number
-	Phone string `json:"phone" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name        respjson.Field
-		Operator    respjson.Field
-		Phone       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionGetStatusByReferenceResponseDataCustomer) RawJSON() string { return r.JSON.raw }
-func (r *CollectionGetStatusByReferenceResponseDataCustomer) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type CollectionInitiateMobileMoneyCollectionResponse struct {
-	Data CollectionInitiateMobileMoneyCollectionResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                      `json:"status" api:"required"`
+	Data   BilaCollectionResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
 func (r CollectionInitiateMobileMoneyCollectionResponse) RawJSON() string { return r.JSON.raw }
 func (r *CollectionInitiateMobileMoneyCollectionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type CollectionInitiateMobileMoneyCollectionResponseData struct {
-	// Collection ID
-	ID string `json:"id" api:"required"`
-	// Collection amount
-	Amount float64 `json:"amount" api:"required"`
-	// Collection creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Currency code
-	Currency string `json:"currency" api:"required"`
-	// Customer details
-	Customer CollectionInitiateMobileMoneyCollectionResponseDataCustomer `json:"customer" api:"required"`
-	// Client reference
-	Reference string `json:"reference" api:"required"`
-	// Collection status
-	//
-	// Any of "pending", "successful", "failed", "otp-required", "pay-offline".
-	Status string `json:"status" api:"required"`
-	// Collection completion timestamp
-	CompletedAt time.Time `json:"completedAt" format:"date-time"`
-	// Who bears the collection platform fee
-	//
-	// Any of "merchant", "customer".
-	FeeBearer string `json:"feeBearer"`
-	// Collection narration
-	Narration string `json:"narration"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Amount      respjson.Field
-		CreatedAt   respjson.Field
-		Currency    respjson.Field
-		Customer    respjson.Field
-		Reference   respjson.Field
-		Status      respjson.Field
-		CompletedAt respjson.Field
-		FeeBearer   respjson.Field
-		Narration   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionInitiateMobileMoneyCollectionResponseData) RawJSON() string { return r.JSON.raw }
-func (r *CollectionInitiateMobileMoneyCollectionResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Customer details
-type CollectionInitiateMobileMoneyCollectionResponseDataCustomer struct {
-	// Customer name
-	Name string `json:"name" api:"required"`
-	// Mobile money operator
-	Operator string `json:"operator" api:"required"`
-	// Customer phone number
-	Phone string `json:"phone" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name        respjson.Field
-		Operator    respjson.Field
-		Phone       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CollectionInitiateMobileMoneyCollectionResponseDataCustomer) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *CollectionInitiateMobileMoneyCollectionResponseDataCustomer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -528,11 +322,11 @@ type CollectionInitiateMobileMoneyCollectionParams struct {
 	Amount float64 `json:"amount" api:"required"`
 	// Country code
 	//
-	// Any of "zm", "ng".
+	// Any of "zm".
 	Country CollectionInitiateMobileMoneyCollectionParamsCountry `json:"country,omitzero" api:"required"`
 	// Mobile money operator
 	//
-	// Any of "airtel", "mtn", "zamtel", "vodacom".
+	// Any of "airtel", "mtn", "zamtel".
 	Operator CollectionInitiateMobileMoneyCollectionParamsOperator `json:"operator,omitzero" api:"required"`
 	// Customer phone number
 	Phone string `json:"phone" api:"required"`
@@ -564,17 +358,15 @@ type CollectionInitiateMobileMoneyCollectionParamsCountry string
 
 const (
 	CollectionInitiateMobileMoneyCollectionParamsCountryZm CollectionInitiateMobileMoneyCollectionParamsCountry = "zm"
-	CollectionInitiateMobileMoneyCollectionParamsCountryNg CollectionInitiateMobileMoneyCollectionParamsCountry = "ng"
 )
 
 // Mobile money operator
 type CollectionInitiateMobileMoneyCollectionParamsOperator string
 
 const (
-	CollectionInitiateMobileMoneyCollectionParamsOperatorAirtel  CollectionInitiateMobileMoneyCollectionParamsOperator = "airtel"
-	CollectionInitiateMobileMoneyCollectionParamsOperatorMtn     CollectionInitiateMobileMoneyCollectionParamsOperator = "mtn"
-	CollectionInitiateMobileMoneyCollectionParamsOperatorZamtel  CollectionInitiateMobileMoneyCollectionParamsOperator = "zamtel"
-	CollectionInitiateMobileMoneyCollectionParamsOperatorVodacom CollectionInitiateMobileMoneyCollectionParamsOperator = "vodacom"
+	CollectionInitiateMobileMoneyCollectionParamsOperatorAirtel CollectionInitiateMobileMoneyCollectionParamsOperator = "airtel"
+	CollectionInitiateMobileMoneyCollectionParamsOperatorMtn    CollectionInitiateMobileMoneyCollectionParamsOperator = "mtn"
+	CollectionInitiateMobileMoneyCollectionParamsOperatorZamtel CollectionInitiateMobileMoneyCollectionParamsOperator = "zamtel"
 )
 
 // Who bears the transaction fee

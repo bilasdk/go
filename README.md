@@ -61,7 +61,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", accounts)
+	fmt.Printf("%+v\n", accounts.Message)
 }
 
 ```

@@ -1,8 +1,13 @@
+# Shared Response Types
+
+- <a href="https://pkg.go.dev/github.com/bilasdk/go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go/shared#PaginationMetaDto">PaginationMetaDto</a>
+
 # Accounts
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#BilaResponse">BilaResponse</a>
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#AccountDetailsDto">AccountDetailsDto</a>
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#AccountResponseDto">AccountResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#AccountGetResponse">AccountGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#AccountListResponse">AccountListResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#AccountGetBalanceResponse">AccountGetBalanceResponse</a>
@@ -17,6 +22,7 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#RecipientResponseDto">RecipientResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferRecipientGetResponse">TransferRecipientGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferRecipientListResponse">TransferRecipientListResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferRecipientNewBankAccountResponse">TransferRecipientNewBankAccountResponse</a>
@@ -33,6 +39,8 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferRecipientDto">TransferRecipientDto</a>
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferResponseDto">TransferResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferGetResponse">TransferGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferListResponse">TransferListResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransferGetStatusByReferenceResponse">TransferGetStatusByReferenceResponse</a>
@@ -51,6 +59,8 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#BilaCollectionCustomerDto">BilaCollectionCustomerDto</a>
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#BilaCollectionResponseDto">BilaCollectionResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#CollectionGetResponse">CollectionGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#CollectionListResponse">CollectionListResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#CollectionGetStatusByReferenceResponse">CollectionGetStatusByReferenceResponse</a>
@@ -67,6 +77,7 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransactionResponseDto">TransactionResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransactionGetResponse">TransactionGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#TransactionListResponse">TransactionListResponse</a>
 
@@ -79,9 +90,11 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookConfigResponseDto">WebhookConfigResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookNewResponse">WebhookNewResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookUpdateResponse">WebhookUpdateResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookListResponse">WebhookListResponse</a>
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookDeactivateResponse">WebhookDeactivateResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookGetDeliveriesResponse">WebhookGetDeliveriesResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookListEventsResponse">WebhookListEventsResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookRotateSecretResponse">WebhookRotateSecretResponse</a>
@@ -91,7 +104,7 @@ Methods:
 - <code title="post /api/v1/bila/webhooks">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookNewParams">WebhookNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookNewResponse">WebhookNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /api/v1/bila/webhooks/{id}">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookUpdateParams">WebhookUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookUpdateResponse">WebhookUpdateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /api/v1/bila/webhooks">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookListResponse">WebhookListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /api/v1/bila/webhooks/{id}">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.Deactivate">Deactivate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#BilaResponse">BilaResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /api/v1/bila/webhooks/{id}">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.Deactivate">Deactivate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookDeactivateResponse">WebhookDeactivateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /api/v1/bila/webhooks/{id}/deliveries">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.GetDeliveries">GetDeliveries</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookGetDeliveriesParams">WebhookGetDeliveriesParams</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookGetDeliveriesResponse">WebhookGetDeliveriesResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /api/v1/bila/webhooks/events">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.ListEvents">ListEvents</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookListEventsResponse">WebhookListEventsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /api/v1/bila/webhooks/{id}/rotate-secret">client.Webhooks.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookService.RotateSecret">RotateSecret</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#WebhookRotateSecretResponse">WebhookRotateSecretResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
@@ -110,6 +123,7 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#ResolvedAccountResponseDto">ResolvedAccountResponseDto</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#ResolveBankAccountResponse">ResolveBankAccountResponse</a>
 - <a href="https://pkg.go.dev/github.com/bilasdk/go">bila</a>.<a href="https://pkg.go.dev/github.com/bilasdk/go#ResolveMobileMoneyResponse">ResolveMobileMoneyResponse</a>
 

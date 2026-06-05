@@ -17,6 +17,7 @@ import (
 	"github.com/bilasdk/go/option"
 	"github.com/bilasdk/go/packages/param"
 	"github.com/bilasdk/go/packages/respjson"
+	"github.com/bilasdk/go/shared"
 )
 
 // Transfer recipient management endpoints
@@ -76,24 +77,7 @@ func (r *TransferRecipientService) NewMobileMoney(ctx context.Context, body Tran
 	return res, err
 }
 
-type TransferRecipientGetResponse struct {
-	Data TransferRecipientGetResponseData `json:"data"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	BilaResponse
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransferRecipientGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *TransferRecipientGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TransferRecipientGetResponseData struct {
+type RecipientResponseDto struct {
 	// Recipient UUID
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Account holder name
@@ -102,10 +86,10 @@ type TransferRecipientGetResponseData struct {
 	Country string `json:"country" api:"required"`
 	// Creation timestamp
 	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Recipient type
+	// Transfer recipient type
 	//
 	// Any of "bank-account", "mobile-money".
-	Type string `json:"type" api:"required"`
+	Type RecipientResponseDtoType `json:"type" api:"required"`
 	// Bank account number (bank-account only)
 	AccountNumber string `json:"accountNumber"`
 	// Bank ID (bank-account only)
@@ -134,20 +118,55 @@ type TransferRecipientGetResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TransferRecipientGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *TransferRecipientGetResponseData) UnmarshalJSON(data []byte) error {
+func (r RecipientResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *RecipientResponseDto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransferRecipientListResponse struct {
-	Data TransferRecipientListResponseData `json:"data"`
+// Transfer recipient type
+type RecipientResponseDtoType string
+
+const (
+	RecipientResponseDtoTypeBankAccount RecipientResponseDtoType = "bank-account"
+	RecipientResponseDtoTypeMobileMoney RecipientResponseDtoType = "mobile-money"
+)
+
+type TransferRecipientGetResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                 `json:"status" api:"required"`
+	Data   RecipientResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransferRecipientGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *TransferRecipientGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TransferRecipientListResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                              `json:"status" api:"required"`
+	Data   TransferRecipientListResponseData `json:"data"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
@@ -158,9 +177,9 @@ func (r *TransferRecipientListResponse) UnmarshalJSON(data []byte) error {
 
 type TransferRecipientListResponseData struct {
 	// List of recipients
-	Data []TransferRecipientListResponseDataData `json:"data" api:"required"`
+	Data []RecipientResponseDto `json:"data" api:"required"`
 	// Pagination metadata
-	Meta TransferRecipientListResponseDataMeta `json:"meta" api:"required"`
+	Meta shared.PaginationMetaDto `json:"meta" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -176,88 +195,20 @@ func (r *TransferRecipientListResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransferRecipientListResponseDataData struct {
-	// Recipient UUID
-	ID string `json:"id" api:"required" format:"uuid"`
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Country code
-	Country string `json:"country" api:"required"`
-	// Creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Recipient type
-	//
-	// Any of "bank-account", "mobile-money".
-	Type string `json:"type" api:"required"`
-	// Bank account number (bank-account only)
-	AccountNumber string `json:"accountNumber"`
-	// Bank ID (bank-account only)
-	BankID string `json:"bankId"`
-	// Bank name (bank-account only)
-	BankName string `json:"bankName"`
-	// Mobile money operator (mobile-money only)
-	Operator string `json:"operator"`
-	// Phone number (mobile-money only)
-	Phone string `json:"phone"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID            respjson.Field
-		AccountName   respjson.Field
-		Country       respjson.Field
-		CreatedAt     respjson.Field
-		Type          respjson.Field
-		AccountNumber respjson.Field
-		BankID        respjson.Field
-		BankName      respjson.Field
-		Operator      respjson.Field
-		Phone         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransferRecipientListResponseDataData) RawJSON() string { return r.JSON.raw }
-func (r *TransferRecipientListResponseDataData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination metadata
-type TransferRecipientListResponseDataMeta struct {
-	// Current page number
-	CurrentPage float64 `json:"currentPage" api:"required"`
-	// Total number of pages
-	PageCount float64 `json:"pageCount" api:"required"`
-	// Items per page
-	PerPage float64 `json:"perPage" api:"required"`
-	// Total number of records
-	Total float64 `json:"total" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CurrentPage respjson.Field
-		PageCount   respjson.Field
-		PerPage     respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransferRecipientListResponseDataMeta) RawJSON() string { return r.JSON.raw }
-func (r *TransferRecipientListResponseDataMeta) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type TransferRecipientNewBankAccountResponse struct {
-	Data TransferRecipientNewBankAccountResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                 `json:"status" api:"required"`
+	Data   RecipientResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
@@ -266,112 +217,25 @@ func (r *TransferRecipientNewBankAccountResponse) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransferRecipientNewBankAccountResponseData struct {
-	// Recipient UUID
-	ID string `json:"id" api:"required" format:"uuid"`
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Country code
-	Country string `json:"country" api:"required"`
-	// Creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Recipient type
-	//
-	// Any of "bank-account", "mobile-money".
-	Type string `json:"type" api:"required"`
-	// Bank account number (bank-account only)
-	AccountNumber string `json:"accountNumber"`
-	// Bank ID (bank-account only)
-	BankID string `json:"bankId"`
-	// Bank name (bank-account only)
-	BankName string `json:"bankName"`
-	// Mobile money operator (mobile-money only)
-	Operator string `json:"operator"`
-	// Phone number (mobile-money only)
-	Phone string `json:"phone"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID            respjson.Field
-		AccountName   respjson.Field
-		Country       respjson.Field
-		CreatedAt     respjson.Field
-		Type          respjson.Field
-		AccountNumber respjson.Field
-		BankID        respjson.Field
-		BankName      respjson.Field
-		Operator      respjson.Field
-		Phone         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransferRecipientNewBankAccountResponseData) RawJSON() string { return r.JSON.raw }
-func (r *TransferRecipientNewBankAccountResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type TransferRecipientNewMobileMoneyResponse struct {
-	Data TransferRecipientNewMobileMoneyResponseData `json:"data"`
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                 `json:"status" api:"required"`
+	Data   RecipientResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
 }
 
 // Returns the unmodified JSON received from the API
 func (r TransferRecipientNewMobileMoneyResponse) RawJSON() string { return r.JSON.raw }
 func (r *TransferRecipientNewMobileMoneyResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TransferRecipientNewMobileMoneyResponseData struct {
-	// Recipient UUID
-	ID string `json:"id" api:"required" format:"uuid"`
-	// Account holder name
-	AccountName string `json:"accountName" api:"required"`
-	// Country code
-	Country string `json:"country" api:"required"`
-	// Creation timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Recipient type
-	//
-	// Any of "bank-account", "mobile-money".
-	Type string `json:"type" api:"required"`
-	// Bank account number (bank-account only)
-	AccountNumber string `json:"accountNumber"`
-	// Bank ID (bank-account only)
-	BankID string `json:"bankId"`
-	// Bank name (bank-account only)
-	BankName string `json:"bankName"`
-	// Mobile money operator (mobile-money only)
-	Operator string `json:"operator"`
-	// Phone number (mobile-money only)
-	Phone string `json:"phone"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID            respjson.Field
-		AccountName   respjson.Field
-		Country       respjson.Field
-		CreatedAt     respjson.Field
-		Type          respjson.Field
-		AccountNumber respjson.Field
-		BankID        respjson.Field
-		BankName      respjson.Field
-		Operator      respjson.Field
-		Phone         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransferRecipientNewMobileMoneyResponseData) RawJSON() string { return r.JSON.raw }
-func (r *TransferRecipientNewMobileMoneyResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -413,7 +277,7 @@ type TransferRecipientNewBankAccountParams struct {
 	AccountName param.Opt[string] `json:"accountName,omitzero"`
 	// Country code
 	//
-	// Any of "zm", "ng".
+	// Any of "zm".
 	Country TransferRecipientNewBankAccountParamsCountry `json:"country,omitzero"`
 	paramObj
 }
@@ -431,17 +295,16 @@ type TransferRecipientNewBankAccountParamsCountry string
 
 const (
 	TransferRecipientNewBankAccountParamsCountryZm TransferRecipientNewBankAccountParamsCountry = "zm"
-	TransferRecipientNewBankAccountParamsCountryNg TransferRecipientNewBankAccountParamsCountry = "ng"
 )
 
 type TransferRecipientNewMobileMoneyParams struct {
 	// Country code
 	//
-	// Any of "zm", "ng".
+	// Any of "zm".
 	Country TransferRecipientNewMobileMoneyParamsCountry `json:"country,omitzero" api:"required"`
 	// Mobile money operator
 	//
-	// Any of "airtel", "mtn", "zamtel", "vodacom".
+	// Any of "airtel", "mtn", "zamtel".
 	Operator TransferRecipientNewMobileMoneyParamsOperator `json:"operator,omitzero" api:"required"`
 	// Mobile phone number
 	Phone string `json:"phone" api:"required"`
@@ -463,15 +326,13 @@ type TransferRecipientNewMobileMoneyParamsCountry string
 
 const (
 	TransferRecipientNewMobileMoneyParamsCountryZm TransferRecipientNewMobileMoneyParamsCountry = "zm"
-	TransferRecipientNewMobileMoneyParamsCountryNg TransferRecipientNewMobileMoneyParamsCountry = "ng"
 )
 
 // Mobile money operator
 type TransferRecipientNewMobileMoneyParamsOperator string
 
 const (
-	TransferRecipientNewMobileMoneyParamsOperatorAirtel  TransferRecipientNewMobileMoneyParamsOperator = "airtel"
-	TransferRecipientNewMobileMoneyParamsOperatorMtn     TransferRecipientNewMobileMoneyParamsOperator = "mtn"
-	TransferRecipientNewMobileMoneyParamsOperatorZamtel  TransferRecipientNewMobileMoneyParamsOperator = "zamtel"
-	TransferRecipientNewMobileMoneyParamsOperatorVodacom TransferRecipientNewMobileMoneyParamsOperator = "vodacom"
+	TransferRecipientNewMobileMoneyParamsOperatorAirtel TransferRecipientNewMobileMoneyParamsOperator = "airtel"
+	TransferRecipientNewMobileMoneyParamsOperatorMtn    TransferRecipientNewMobileMoneyParamsOperator = "mtn"
+	TransferRecipientNewMobileMoneyParamsOperatorZamtel TransferRecipientNewMobileMoneyParamsOperator = "zamtel"
 )

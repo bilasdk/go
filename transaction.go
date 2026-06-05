@@ -17,6 +17,7 @@ import (
 	"github.com/bilasdk/go/option"
 	"github.com/bilasdk/go/packages/param"
 	"github.com/bilasdk/go/packages/respjson"
+	"github.com/bilasdk/go/shared"
 )
 
 // Transaction history endpoints
@@ -60,24 +61,7 @@ func (r *TransactionService) List(ctx context.Context, query TransactionListPara
 	return res, err
 }
 
-type TransactionGetResponse struct {
-	Data TransactionGetResponseData `json:"data"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-	BilaResponse
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *TransactionGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TransactionGetResponseData struct {
+type TransactionResponseDto struct {
 	// Transaction UUID
 	ID string `json:"id" api:"required"`
 	// Account / wallet ID
@@ -95,11 +79,11 @@ type TransactionGetResponseData struct {
 	// Transaction status
 	//
 	// Any of "pending", "successful", "failed", "cancelled".
-	Status string `json:"status" api:"required"`
+	Status TransactionResponseDtoStatus `json:"status" api:"required"`
 	// Transaction type
 	//
 	// Any of "credit", "debit".
-	Type string `json:"type" api:"required"`
+	Type TransactionResponseDtoType `json:"type" api:"required"`
 	// Transaction description
 	Description string `json:"description"`
 	// Client reference
@@ -123,20 +107,65 @@ type TransactionGetResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TransactionGetResponseData) RawJSON() string { return r.JSON.raw }
-func (r *TransactionGetResponseData) UnmarshalJSON(data []byte) error {
+func (r TransactionResponseDto) RawJSON() string { return r.JSON.raw }
+func (r *TransactionResponseDto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransactionListResponse struct {
-	Data TransactionListResponseData `json:"data"`
+// Transaction status
+type TransactionResponseDtoStatus string
+
+const (
+	TransactionResponseDtoStatusPending    TransactionResponseDtoStatus = "pending"
+	TransactionResponseDtoStatusSuccessful TransactionResponseDtoStatus = "successful"
+	TransactionResponseDtoStatusFailed     TransactionResponseDtoStatus = "failed"
+	TransactionResponseDtoStatusCancelled  TransactionResponseDtoStatus = "cancelled"
+)
+
+// Transaction type
+type TransactionResponseDtoType string
+
+const (
+	TransactionResponseDtoTypeCredit TransactionResponseDtoType = "credit"
+	TransactionResponseDtoTypeDebit  TransactionResponseDtoType = "debit"
+)
+
+type TransactionGetResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                   `json:"status" api:"required"`
+	Data   TransactionResponseDto `json:"data"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
 		Data        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
-	BilaResponse
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *TransactionGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TransactionListResponse struct {
+	// Response message
+	Message string `json:"message" api:"required"`
+	// Request success status
+	Status bool                        `json:"status" api:"required"`
+	Data   TransactionListResponseData `json:"data"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message     respjson.Field
+		Status      respjson.Field
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
@@ -147,9 +176,9 @@ func (r *TransactionListResponse) UnmarshalJSON(data []byte) error {
 
 type TransactionListResponseData struct {
 	// List of transactions
-	Data []TransactionListResponseDataData `json:"data" api:"required"`
+	Data []TransactionResponseDto `json:"data" api:"required"`
 	// Pagination metadata
-	Meta TransactionListResponseDataMeta `json:"meta" api:"required"`
+	Meta shared.PaginationMetaDto `json:"meta" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -162,84 +191,6 @@ type TransactionListResponseData struct {
 // Returns the unmodified JSON received from the API
 func (r TransactionListResponseData) RawJSON() string { return r.JSON.raw }
 func (r *TransactionListResponseData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TransactionListResponseDataData struct {
-	// Transaction UUID
-	ID string `json:"id" api:"required"`
-	// Account / wallet ID
-	AccountID string `json:"accountId" api:"required"`
-	// Transaction amount
-	Amount float64 `json:"amount" api:"required"`
-	// Balance after transaction
-	BalanceAfter float64 `json:"balanceAfter" api:"required"`
-	// Balance before transaction
-	BalanceBefore float64 `json:"balanceBefore" api:"required"`
-	// Transaction timestamp
-	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
-	// Currency code
-	Currency string `json:"currency" api:"required"`
-	// Transaction status
-	//
-	// Any of "pending", "successful", "failed", "cancelled".
-	Status string `json:"status" api:"required"`
-	// Transaction type
-	//
-	// Any of "credit", "debit".
-	Type string `json:"type" api:"required"`
-	// Transaction description
-	Description string `json:"description"`
-	// Client reference
-	Reference string `json:"reference"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID            respjson.Field
-		AccountID     respjson.Field
-		Amount        respjson.Field
-		BalanceAfter  respjson.Field
-		BalanceBefore respjson.Field
-		CreatedAt     respjson.Field
-		Currency      respjson.Field
-		Status        respjson.Field
-		Type          respjson.Field
-		Description   respjson.Field
-		Reference     respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionListResponseDataData) RawJSON() string { return r.JSON.raw }
-func (r *TransactionListResponseDataData) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination metadata
-type TransactionListResponseDataMeta struct {
-	// Current page number
-	CurrentPage float64 `json:"currentPage" api:"required"`
-	// Total number of pages
-	PageCount float64 `json:"pageCount" api:"required"`
-	// Items per page
-	PerPage float64 `json:"perPage" api:"required"`
-	// Total number of records
-	Total float64 `json:"total" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CurrentPage respjson.Field
-		PageCount   respjson.Field
-		PerPage     respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionListResponseDataMeta) RawJSON() string { return r.JSON.raw }
-func (r *TransactionListResponseDataMeta) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
