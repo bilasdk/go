@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 (2026-07-18)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/bilasdk/go/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **examples:** add runnable examples for API usage ([8429475](https://github.com/bilasdk/go/commit/842947578a7598de1eeaa477f670de165ab6d405))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([c0bded2](https://github.com/bilasdk/go/commit/c0bded2215a27e079afa311726ef7f4c9492eaea))
+
 ## 0.1.0 (2026-06-05)
 
 Full Changelog: [v0.0.2...v0.1.0](https://github.com/bilasdk/go/compare/v0.0.2...v0.1.0)
